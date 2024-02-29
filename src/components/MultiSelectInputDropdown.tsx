@@ -1,65 +1,93 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo } from 'react';
+import { GetFilteredCharactersQuery } from '../__generated__/graphql';
+import useKeyboardControlledList from '../hooks/useKeyboardControlledList';
 import styles from './MultiSelectInputDropdown.module.css';
 
 type Props = {
-  items: any[];
+  data: GetFilteredCharactersQuery | undefined;
+  loading: boolean;
+  searchTerm: string;
+  handleSelect: (name: string) => void;
+  handleChange: (name: string) => void;
 };
 
-function MultiSelectInputDropdown({ items }: Props) {
-  const [activeItemIndex, setActiveItemIndex] = useState(0);
-  const activeItemRef = useRef<HTMLLIElement>(null);
+function MultiSelectInputDropdown({
+  data,
+  loading,
+  searchTerm,
+  handleSelect,
+  handleChange,
+}: Props) {
+  const items = useMemo(() => data?.characters?.results || [], [data]);
+  const { activeItemIndex, activeItemRef } = useKeyboardControlledList(
+    items.length
+  );
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const key = event.key;
+    if (activeItemIndex == -1) return;
 
-      if (key === 'ArrowDown') {
-        setActiveItemIndex((prev) => (prev + 1) % items.length);
-      } else if (key === 'ArrowUp') {
-        setActiveItemIndex((prev) => (prev - 1 + items.length) % items.length);
-      }
-    };
+    handleChange(items[activeItemIndex]?.name || '');
+  }, [activeItemIndex, handleChange, items]);
 
-    document.addEventListener('keydown', handleKeyDown);
+  const returnItemNameJSX = (fullName: string) => {
+    if (!fullName) return;
 
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [items.length]);
+    searchTerm = searchTerm.trim();
+    const boldStartIndex = fullName
+      .toLowerCase()
+      .indexOf(searchTerm.toLowerCase());
 
-  useEffect(() => {
-    if (!activeItemRef.current) return;
+    const boldPart = fullName.substring(
+      boldStartIndex,
+      boldStartIndex + searchTerm.length
+    );
+    const beforeBoldPart = fullName.substring(0, boldStartIndex);
+    const afterBoldPart = fullName.substring(
+      boldStartIndex + searchTerm.length
+    );
 
-    activeItemRef.current.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-    });
-  }, [activeItemIndex]);
+    return (
+      <p className={styles.listItemName}>
+        <span>{beforeBoldPart}</span>
+        <span className={styles.bold}>{boldPart}</span>
+        <span>{afterBoldPart}</span>
+      </p>
+    );
+  };
 
   return (
-    <ul className={styles.list}>
-      {items.map((item, index) => (
-        <li
-          className={`${styles.listItem} ${
-            index === activeItemIndex ? styles.active : ''
-          }`}
-          key={index}
-          ref={index === activeItemIndex ? activeItemRef : null}
-        >
-          <img
-            className={styles.image}
-            src="https://cdn.dribbble.com/users/5592443/screenshots/14279501/drbl_pop_r_m_rick_4x.png"
-            alt=""
-          />
-          <div className={styles.listItemDetails}>
-            <span className={styles.listItemName}>{item.name}</span>
-            <span className={styles.listItemEpisodes}>
-              {item.episodes} Episodes
-            </span>
-          </div>
-        </li>
-      ))}
-    </ul>
+    <div className={styles.wrapper}>
+      {loading && <p className={styles.notification}>Loading...</p>}
+      {items.length === 0 && !loading && (
+        <p className={styles.notification}>No results found for this query.</p>
+      )}
+      {items.length > 0 && (
+        <ul className={styles.list}>
+          {items.map((item, index) => (
+            <li
+              className={`${styles.listItem} ${
+                index === activeItemIndex ? styles.active : ''
+              }`}
+              key={index}
+              ref={index === activeItemIndex ? activeItemRef : null}
+              onClick={() => handleSelect(item?.name || '')}
+            >
+              <img
+                className={styles.image}
+                src={item?.image || ''}
+                alt="Rick and Morty Avatar"
+              />
+              <div className={styles.listItemDetails}>
+                {returnItemNameJSX(item?.name || '')}
+                <span className={styles.listItemEpisodes}>
+                  {item?.episode.length} Episodes
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 

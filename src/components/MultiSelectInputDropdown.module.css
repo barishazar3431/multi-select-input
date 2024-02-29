@@ -1,8 +1,18 @@
-.list {
+.wrapper {
   margin-top: 0.5rem;
-  max-height: 30rem;
   border: 1px solid var(--color-primary-500);
   border-radius: 0.6rem;
+}
+
+.notification {
+  text-align: center;
+  padding: 4rem;
+  color: var(--color-primary-700);
+  font-size: 1.2rem;
+}
+
+.list {
+  max-height: 30rem;
   overflow-y: scroll;
 }
 
@@ -38,7 +48,12 @@
 
 .listItemName {
   font-size: 1.3rem;
-  font-weight: bold;
+  font-weight: 500;
+}
+
+.bold {
+  font-weight: 900;
+  color: var(--color-primary-800);
 }
 
 .listItemEpisodes {

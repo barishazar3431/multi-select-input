@@ -6,7 +6,6 @@
 .inputArea {
   border: 1px solid var(--color-primary-500);
   border-radius: 0.8rem;
-  /* height: 2rem; */
   display: flex;
   align-items: center;
   padding: 0.5rem;
@@ -16,19 +15,18 @@
 }
 
 .selectedList {
-  display: flex;
-  align-items: center;
+  display: grid;
+  grid-template-columns: auto auto;
   gap: 0.4rem;
-  /* max-width: 70%; */
 }
 
 .selectedItem {
   background-color: var(--color-primary-300);
   border-radius: 0.3rem;
   padding: 0.4rem 0.5rem;
-  white-space: nowrap;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 1rem;
 }
 
@@ -53,5 +51,6 @@
   flex: 1;
   border: none;
   outline: none;
-  padding: 0.5rem;
+  padding: 0.5rem 0;
+  align-self: stretch;
 }
