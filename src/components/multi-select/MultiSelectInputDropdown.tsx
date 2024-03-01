@@ -1,37 +1,27 @@
-import { useEffect, useMemo } from 'react';
-import { GetFilteredCharactersQuery } from '../../__generated__/graphql';
-import useKeyboardControlledList from '../../hooks/useKeyboardControlledList';
+import { Character } from './MultiSelectInput';
 import styles from './MultiSelectInputDropdown.module.css';
 
 type Props = {
-  data: GetFilteredCharactersQuery | undefined;
+  items: Character[];
   loading: boolean;
   searchTerm: string;
   handleSelect: (name: string) => void;
-  handleChange: (name: string) => void;
   selectedItems: string[];
+  activeItemIndex: number;
+  activeItemRef: React.RefObject<HTMLLIElement>;
 };
 
-
 function MultiSelectInputDropdown({
-  data,
+  items,
   loading,
   searchTerm,
   handleSelect,
-  handleChange,
   selectedItems,
+  activeItemIndex,
+  activeItemRef,
 }: Props) {
-  const items = useMemo(() => data?.characters?.results || [], [data]);
-  const { activeItemIndex, activeItemRef } = useKeyboardControlledList(
-    items.length
-  );
 
-  useEffect(() => {
-    if (activeItemIndex == -1) return;
-
-    handleChange(items[activeItemIndex]?.name || '');
-  }, [activeItemIndex, handleChange, items]);
-
+  
   const returnItemNameJSX = (fullName: string) => {
     if (!fullName) return;
 

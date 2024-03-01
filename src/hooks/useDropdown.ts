@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 export function useDropdown() {
-  const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const parentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -10,7 +10,7 @@ export function useDropdown() {
         parentRef.current &&
         !parentRef.current.contains(event.target as Node)
       ) {
-        setIsDropDownOpen(false);
+        setIsDropdownOpen(false);
       }
     };
 
@@ -21,5 +21,5 @@ export function useDropdown() {
     };
   }, []);
 
-  return { isDropDownOpen, setIsDropDownOpen, parentRef };
+  return {  isDropdownOpen,  setIsDropdownOpen, parentRef };
 }

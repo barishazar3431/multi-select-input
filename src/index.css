@@ -116,4 +116,12 @@ ul {
   --color-primary-500: #94a3b8;
   --color-primary-700: #475569;
   --color-primary-800: #1e242c;
+
+  --color-secondary-500: #be0000;
+}
+
+@media (max-width: 470px) {
+  html {
+    font-size: 14px;
+  }
 }
