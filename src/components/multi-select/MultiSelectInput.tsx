@@ -49,13 +49,15 @@ export default function MultiSelectInput({ onChange }: Props) {
     setIsDropdownOpen,
     parentRef,
     activeItemIndex,
+    setActiveItemIndex,
     activeItemRef,
     handleInputPress,
   } = useKeyboardControlledDropdown(items.length);
 
   useEffect(() => {
     setItems(data?.characters?.results || []);
-  }, [data]);
+    setActiveItemIndex(-1);
+  }, [data, setActiveItemIndex]);
 
   useEffect(() => {
     onChange(selectedItems);

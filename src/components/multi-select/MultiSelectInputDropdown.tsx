@@ -20,8 +20,6 @@ function MultiSelectInputDropdown({
   activeItemIndex,
   activeItemRef,
 }: Props) {
-
-  
   const returnItemNameJSX = (fullName: string) => {
     if (!fullName) return;
 
@@ -70,11 +68,9 @@ function MultiSelectInputDropdown({
                 checked={selectedItems.includes(item?.name || '')}
                 readOnly
               />
-              <img
-                className={styles.image}
-                src={item?.image || ''}
-                alt="Rick and Morty Avatar"
-              />
+              <div className={styles.imageContainer}>
+                <img className={styles.image} src={item?.image || ''} />
+              </div>
               <div className={styles.listItemDetails}>
                 {returnItemNameJSX(item?.name || '')}
                 <span className={styles.listItemEpisodes}>
