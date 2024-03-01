@@ -3,10 +3,11 @@ import styles from './MultiSelectInput.module.css';
 import { useQuery } from '@apollo/client';
 import { ChangeEvent, useRef, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
-import { gql } from '../__generated__';
-import { useDropdown } from '../hooks/useDropdown';
+import { gql } from '../../__generated__';
+import { useDropdown } from '../../hooks/useDropdown';
 import MultiSelectInputDropdown from './MultiSelectInputDropdown';
 import debounce from 'debounce';
+import { VscTriangleDown } from 'react-icons/vsc';
 
 const GET_ITEMS = gql(`
 query GetFilteredCharacters($name: String!){
@@ -42,33 +43,38 @@ export default function MultiSelectInput() {
     setSearchTerm(searchTerm || defaultSearchTerm);
   };
 
-  const debouncedHandleInputChange = debounce(handleInputChange, 250); // To avoid sending too much request
+  const debouncedHandleInputChange = debounce(handleInputChange, 250); // To avoid sending a request on every keystroke.
 
   const handleInputKeyDown = (event: React.KeyboardEvent) => {
     const key = event.key;
     if (!inputRef.current?.value && key === 'Backspace') {
-      const newSelectedItems = selectedItems.slice(0, selectedItems.length - 1);
-      setSelectedItems(newSelectedItems);
-    } else if (key === 'Enter') {
-      if (activeItem) {
-        setSelectedItems([...selectedItems, activeItem]);
-      }
+      const lastItem = selectedItems[selectedItems.length - 1];
+      handleItemDeselect(lastItem);
+    } else if (activeItem && key === 'Enter') {
+      toggleSelectedItem(activeItem);
+    } else if (key === 'Escape') {
+      setIsDropDownOpen(false);
+    } else {
+      setIsDropDownOpen(true);
     }
   };
 
-  const handleItemDeselect = (item: string) => {
+  function handleItemDeselect(item: string) {
     const newSelectedItems = selectedItems.filter(
       (selectedItem) => selectedItem.toLowerCase() !== item.toLowerCase()
     );
 
     setSelectedItems(newSelectedItems);
-  };
+  }
 
-  const handleCharacterSelect = (name: string) => {
-    const newSelectedItems = [...selectedItems, name];
-
-    setSelectedItems(newSelectedItems);
-  };
+  function toggleSelectedItem(item: string) {
+    const isItemAlreadySelected = selectedItems.includes(item);
+    if (isItemAlreadySelected) {
+      handleItemDeselect(item);
+    } else {
+      setSelectedItems([...selectedItems, item]);
+    }
+  }
 
   const handleCharacterChange = (name: string) => {
     setActiveItem(name);
@@ -99,15 +105,23 @@ export default function MultiSelectInput() {
           onFocus={() => setIsDropDownOpen(true)}
           onKeyDown={handleInputKeyDown}
         />
-        <button className={styles.expandBtn}></button>
+        <button
+          className={`${styles.expandBtn} ${
+            isDropDownOpen ? styles.rotated : ''
+          }`}
+          onClick={() => setIsDropDownOpen((prev) => !prev)}
+        >
+          <VscTriangleDown />
+        </button>
       </div>
       {isDropDownOpen && (
         <MultiSelectInputDropdown
           data={data}
           loading={loading}
-          searchTerm={searchTerm}
-          handleSelect={handleCharacterSelect}
+          searchTerm={inputRef.current?.value || ''}
+          handleSelect={toggleSelectedItem}
           handleChange={handleCharacterChange}
+          selectedItems={selectedItems}
         />
       )}
     </div>

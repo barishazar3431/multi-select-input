@@ -18,6 +18,8 @@
   display: grid;
   grid-template-columns: auto auto;
   gap: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: bold;
 }
 
 .selectedItem {
@@ -28,12 +30,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  animation: expand 0.3s;
 }
 
 .selectedItemBtn {
   display: block;
   border: none;
   color: white;
+  font-weight: bold;
   background-color: var(--color-primary-500);
   display: flex;
   align-items: center;
@@ -53,4 +57,28 @@
   outline: none;
   padding: 0.5rem 0;
   align-self: stretch;
+}
+
+.expandBtn {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  transform: rotate(0);
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.rotated {
+  transform: rotate(180deg);
+}
+
+@keyframes expand {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
 }

@@ -1,4 +1,4 @@
-import MultiSelectInput from './components/MultiSelectInput';
+import MultiSelectInput from './components/multi-select/MultiSelectInput';
 import styles from './App.module.css';
 
 function App() {

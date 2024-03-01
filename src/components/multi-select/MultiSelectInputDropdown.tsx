@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
-import { GetFilteredCharactersQuery } from '../__generated__/graphql';
-import useKeyboardControlledList from '../hooks/useKeyboardControlledList';
+import { GetFilteredCharactersQuery } from '../../__generated__/graphql';
+import useKeyboardControlledList from '../../hooks/useKeyboardControlledList';
 import styles from './MultiSelectInputDropdown.module.css';
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
   searchTerm: string;
   handleSelect: (name: string) => void;
   handleChange: (name: string) => void;
+  selectedItems: string[];
 };
 
 function MultiSelectInputDropdown({
@@ -17,6 +18,7 @@ function MultiSelectInputDropdown({
   searchTerm,
   handleSelect,
   handleChange,
+  selectedItems,
 }: Props) {
   const items = useMemo(() => data?.characters?.results || [], [data]);
   const { activeItemIndex, activeItemRef } = useKeyboardControlledList(
@@ -72,6 +74,11 @@ function MultiSelectInputDropdown({
               ref={index === activeItemIndex ? activeItemRef : null}
               onClick={() => handleSelect(item?.name || '')}
             >
+              <input
+                type="checkbox"
+                checked={selectedItems.includes(item?.name || '')}
+                readOnly
+              />
               <img
                 className={styles.image}
                 src={item?.image || ''}
